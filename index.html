@@ -17,7 +17,13 @@
     <span class="btn btn-success fileinput-button">
         <span>Selecionar Arquivos</span>
         <!-- input do tipo file meio que escondido atrás do botão -->
-        <input id="fileInput" type="file" onchange="parseFiles();" multiple>
+        <input
+                id="fileInput"
+                type="file"
+                onchange="parseFiles();"
+                multiple
+                accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps"
+        >
     </span>
   </p>
   <hr>
