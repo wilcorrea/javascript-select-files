@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<!-- todo o form é uma drop zone -->
-<form name="uploadForm" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+<!-- o form é uma drop zone -->
+<form name="uploadForm" ondrop="dropHandler(event);" ondragover="prevent(event);">
   <p>
     <!-- botão para selecionar os arquivos -->
     <span class="btn btn-success fileinput-button">

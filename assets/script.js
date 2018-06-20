@@ -6,7 +6,7 @@ function dropHandler ($event) {
   let i
 
   // evita o comportamento padrão
-  $event.preventDefault()
+  prevent($event)
 
   const files = []
   // analisa os items do drop
@@ -51,20 +51,18 @@ function removeDragData ($event) {
 
 /**
  * Evita o comportamento padrão do navegador
- * @param {DragEvent} $event
+ * @param {Event} $event
  */
-function dragOverHandler ($event) {
-  // console.log('File(s) in drop zone')
-
+function prevent ($event) {
   // evita o comportamento padrão
   $event.preventDefault()
 }
 
 /**
  * Processa os arquivos que estão sendo manipulados
- * @param {Array} files
+ * @param {Array} [files]
  */
-function parseFiles (files) {
+function parseFiles (files = []) {
   // se não tiver sido enviado por parâmetros o files é pego do input
   if (!files) {
     files = document.getElementById('fileInput').files
