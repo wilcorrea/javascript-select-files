@@ -5,12 +5,17 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Upload</title>
-  <script src="script.js" type="text/javascript"></script>
+  <script src="assets/script.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <form name="uploadForm">
   <p>
-    <input id="uploadInput" type="file" name="myFiles" onchange="updateSize();" multiple>
+    <span class="btn btn-success fileinput-button">
+        <span>Selecionar Arquivos</span>
+        <input id="fileInput" type="file" onchange="updateSize();" multiple>
+    </span>
   </p>
   <hr>
   <p>
@@ -19,7 +24,10 @@
   <p>
     total size: <span id="fileSize">0</span>
   </p>
-  <div id="fileList"></div>
+  <table role="presentation" class="table table-striped">
+    <tbody id="fileList">
+    </tbody>
+  </table>
 </form>
 </body>
 </html>

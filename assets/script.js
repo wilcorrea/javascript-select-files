@@ -1,7 +1,8 @@
 function updateSize () {
   let bytes = 0,
-    files = document.getElementById('uploadInput').files,
-    count = files.length
+    files = document.getElementById('fileInput').files,
+    count = files.length,
+    list = []
   for (let index = 0; index < count; index++) {
     // console.log('~> index: ', files[index])
     /*
@@ -13,6 +14,15 @@ function updateSize () {
     webkitRelativePath: ""
      */
     bytes += files[index].size
+    let tr = '<tr class="">' +
+      '      <td>' +
+      '        <p class="name">' + files[index].name + '</p>' +
+      '      </td>' +
+      '      <td>' +
+      '        <p class="size">' + files[index].size + '</p>' +
+      '      </td>' +
+      '    </tr>'
+    list.push(tr)
   }
 
   let size = bytes + ' bytes'
@@ -26,5 +36,5 @@ function updateSize () {
   // end of optional code
   document.getElementById('fileCount').innerHTML = String(count)
   document.getElementById('fileSize').innerHTML = size
-  document.getElementById('fileList').innerHTML = size
+  document.getElementById('fileList').innerHTML = list.join('')
 }
