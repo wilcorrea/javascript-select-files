@@ -10,15 +10,19 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
+<!-- todo o form é uma drop zone -->
 <form name="uploadForm" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
   <p>
+    <!-- botão para selecionar os arquivos -->
     <span class="btn btn-success fileinput-button">
         <span>Selecionar Arquivos</span>
-        <input id="fileInput" type="file" onchange="updateSize();" multiple>
+        <!-- input do tipo file meio que escondido atrás do botão -->
+        <input id="fileInput" type="file" onchange="parseFiles();" multiple>
     </span>
   </p>
   <hr>
   <table role="presentation" class="table table-striped">
+    <!-- tabela para exibir os arquivos selecionados -->
     <tbody id="fileList">
     </tbody>
   </table>

@@ -1,73 +1,79 @@
 /**
- * @param $event
+ * Lida com o drop dos arquivos
+ * @param {DragEvent} $event
  */
 function dropHandler ($event) {
   let i
 
-  // Prevent default behavior (Prevent file from being opened)
+  // evita o comportamento padrão
   $event.preventDefault()
 
   const files = []
+  // analisa os items do drop
   if ($event.dataTransfer.items) {
-    // Use DataTransferItemList interface to access the file(s)
     for (i = 0; i < $event.dataTransfer.items.length; i++) {
-      // If dropped items aren't files, reject them
       if ($event.dataTransfer.items[i].kind === 'file') {
+        // recupera os itens como arquivos
         let file = $event.dataTransfer.items[i].getAsFile()
         files.push(file)
       }
     }
   } else {
-    // Use DataTransfer interface to access the file(s)
+    // trabalha com os arquivos diretamente no evento
     for (i = 0; i < $event.dataTransfer.files.length; i++) {
       let file = $event.dataTransfer.files[i]
       files.push(file)
     }
   }
 
-  updateSize(files)
+  // processa os arquivos capturados
+  parseFiles(files)
 
-  // Pass event to removeDragData for cleanup
+  // dá uma limpeza na área de transferência
   removeDragData($event)
 }
 
 /**
- * @param $event
+ * Limpa a área de transferência do evento
+ * @param {DragEvent} $event
  */
 function removeDragData ($event) {
   // console.log('Removing drag data')
 
   if ($event.dataTransfer.items) {
-    // Use DataTransferItemList interface to remove the drag data
+    // limpa os itens da área de transferência do evento
     $event.dataTransfer.items.clear()
     return
   }
-  // Use DataTransfer interface to remove the drag data
+  // limpa a área de transferência
   $event.dataTransfer.clearData()
 }
 
 /**
- * @param $event
+ * Evita o comportamento padrão do navegador
+ * @param {DragEvent} $event
  */
 function dragOverHandler ($event) {
   // console.log('File(s) in drop zone')
 
-  // Prevent default behavior (Prevent file from being opened)
+  // evita o comportamento padrão
   $event.preventDefault()
 }
 
 /**
- * @param files
+ * Processa os arquivos que estão sendo manipulados
+ * @param {Array} files
  */
-function updateSize (files) {
+function parseFiles (files) {
+  // se não tiver sido enviado por parâmetros o files é pego do input
   if (!files) {
     files = document.getElementById('fileInput').files
   }
 
-  let bytes = 0,
-    count = files.length,
+  let count = files.length,
     list = [],
     data = []
+  // percorre o array de arquivos
   for (let index = 0; index < count; index++) {
     /*
     lastModified:1529182639895
@@ -77,7 +83,7 @@ function updateSize (files) {
     type:"image/png"
     webkitRelativePath: ""
      */
-    bytes += files[index].size
+    // concatena a tr para exibir na table
     let tr = '<tr class="">' +
       '      <td>' +
       '        <p class="name">' + files[index].name + '</p>' +
@@ -87,29 +93,35 @@ function updateSize (files) {
       '      </td>' +
       '    </tr>'
     list.push(tr)
+
+    // converte o arquivo para base64
     parseBase64(files[index], function (content) {
       data.push({
         name: files[index].name,
         content: content
       })
+      // se este for o último processado finaliza o processo
       if (data.length === count) {
         process(data)
       }
     })
   }
 
+  // exibe as tr na table
   document.getElementById('fileList').innerHTML = list.join('')
 }
 
 /**
- * @param bytes
+ * Converte bytes em uma unidade mais amigável
+ * @param {int} bytes
  * @returns {string}
  */
 function human (bytes) {
   let size = bytes + ' bytes'
-  // optional code for multiples approximation
+  // notações comuns
   const units = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
   let multiple = 0, approximation = bytes / 1024
+  // vai calculando os múltiplos até chegar na unidade mais adequada
   for (; approximation > 1; approximation /= 1024, multiple++) {
     size = approximation.toFixed(3) + ' ' + units[multiple]
   }
@@ -117,6 +129,7 @@ function human (bytes) {
 }
 
 /**
+ * Convert um arquivo em base64
  * @param {File} file
  * @param {Function} callback
  */
@@ -135,7 +148,8 @@ function parseBase64 (file, callback) {
 }
 
 /**
- * @param data
+ * Finaliza o processo
+ * @param {Array} data
  */
 function process (data) {
   console.log('~> data ' , data)
