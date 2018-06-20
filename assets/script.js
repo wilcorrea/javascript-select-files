@@ -1,4 +1,14 @@
 /**
+ * @type {number}
+ */
+const APP_MAX_INPUT_FILE = 10 * 1024 * 1024
+
+/**
+ * @type {boolean}
+ */
+const APP_UNIT_SI = true
+
+/**
  * Lida com o drop dos arquivos
  * @param {DragEvent} $event
  */
@@ -70,7 +80,8 @@ function parseFiles (files) {
 
   let count = files.length,
     list = [],
-    data = []
+    data = [],
+    bytes = 0
   // percorre o array de arquivos
   for (let index = 0; index < count; index++) {
     /*
@@ -82,15 +93,14 @@ function parseFiles (files) {
     webkitRelativePath: ""
      */
     // concatena a tr para exibir na table
-    let tr = '<tr class="">' +
-      '      <td>' +
-      '        <p class="name">' + files[index].name + '</p>' +
-      '      </td>' +
-      '      <td>' +
-      '        <p class="size text-right">' + human(files[index].size) + '</p>' +
-      '      </td>' +
-      '    </tr>'
-    list.push(tr)
+    let name = files[index].name
+    let size = files[index].size
+    list.push({
+      name, size
+    })
+
+    // soma o total de bytes
+    bytes = bytes + size
 
     // converte o arquivo para base64
     parseBase64(files[index], function (content) {
@@ -100,13 +110,27 @@ function parseFiles (files) {
       })
       // se este for o último processado finaliza o processo
       if (data.length === count) {
-        process(data)
+        process(data, bytes)
       }
     })
   }
 
   // exibe as tr na table
-  document.getElementById('fileList').innerHTML = list.join('')
+  updateFileList(list)
+}
+
+/**
+ * Atualiza a lista no grid
+ * @param {Array} files
+ */
+function updateFileList (files) {
+  const map = file => {
+    return '<tr class="">' +
+      '<td><p class="name">' + file.name + '</p></td>' +
+      '<td><p class="size text-right">' + human(file.size) + '</p></td>' +
+      '</tr>'
+  }
+  document.getElementById('fileList').innerHTML = files.map(map).join('')
 }
 
 /**
@@ -115,12 +139,11 @@ function parseFiles (files) {
  * @returns {string}
  */
 function human (bytes) {
-  const si = true
-  const thresh = si ? 1000 : 1024
+  const thresh = APP_UNIT_SI ? 1000 : 1024
   if (Math.abs(bytes) < thresh) {
     return bytes + ' B'
   }
-  const units = si
+  const units = APP_UNIT_SI
     ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
   let u = -1
@@ -153,11 +176,19 @@ function parseBase64 (file, callback) {
 /**
  * Finaliza o processo
  * @param {Array} data
+ * @param {Number} bytes
  */
-function process (data) {
+function process (data, bytes) {
   console.log('~> data ', data)
+  if (bytes > APP_MAX_INPUT_FILE) {
+    updateFileList([])
+    return window.alert('Você informou ' +
+      '`' + human(bytes) + '` e o máximo de dados permitido é ' +
+      '`' + human(APP_MAX_INPUT_FILE) + '`'
+    )
+  }
   try {
-    ajaxRequest(MainForm.uniMemo1, 'evTeste', ['param1=' + JSON.stringify(data)]);
+    ajaxRequest(MainForm.uniMemo1, 'evTeste', ['param1=' + JSON.stringify(data)])
     window.alert('Os ' + data.length + ' foram salvos com sucesso!')
   } catch (e) {
     window.alert(e.toString())
