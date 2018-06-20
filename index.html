@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<form name="uploadForm">
+<form name="uploadForm" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
   <p>
     <span class="btn btn-success fileinput-button">
         <span>Selecionar Arquivos</span>

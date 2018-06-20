@@ -12,10 +12,17 @@
 
 body {
     padding: 10px;
+    background: #F3F4F5;
 }
 
 table {
     border: 1px solid #dee2e6;
+}
+
+form {
+    border: 2px dashed rgb(204, 204, 204);
+    padding: 10px;
+    background: #FFFFFF;
 }
 
 .fileinput-button {

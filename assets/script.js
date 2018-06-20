@@ -1,6 +1,70 @@
-function updateSize () {
+/**
+ * @param $event
+ */
+function dropHandler ($event) {
+  let i
+
+  // Prevent default behavior (Prevent file from being opened)
+  $event.preventDefault()
+
+  const files = []
+  if ($event.dataTransfer.items) {
+    // Use DataTransferItemList interface to access the file(s)
+    for (i = 0; i < $event.dataTransfer.items.length; i++) {
+      // If dropped items aren't files, reject them
+      if ($event.dataTransfer.items[i].kind === 'file') {
+        let file = $event.dataTransfer.items[i].getAsFile()
+        files.push(file)
+      }
+    }
+  } else {
+    // Use DataTransfer interface to access the file(s)
+    for (i = 0; i < $event.dataTransfer.files.length; i++) {
+      let file = $event.dataTransfer.files[i]
+      files.push(file)
+    }
+  }
+
+  updateSize(files)
+
+  // Pass event to removeDragData for cleanup
+  removeDragData($event)
+}
+
+/**
+ * @param $event
+ */
+function removeDragData ($event) {
+  console.log('Removing drag data')
+
+  if ($event.dataTransfer.items) {
+    // Use DataTransferItemList interface to remove the drag data
+    $event.dataTransfer.items.clear()
+    return
+  }
+  // Use DataTransfer interface to remove the drag data
+  $event.dataTransfer.clearData()
+}
+
+/**
+ * @param $event
+ */
+function dragOverHandler($event) {
+  console.log('File(s) in drop zone');
+
+  // Prevent default behavior (Prevent file from being opened)
+  $event.preventDefault();
+}
+
+/**
+ * @param files
+ */
+function updateSize (files) {
+  if (!files) {
+    files = document.getElementById('fileInput').files
+  }
+
   let bytes = 0,
-    files = document.getElementById('fileInput').files,
     count = files.length,
     list = []
   for (let index = 0; index < count; index++) {
@@ -37,4 +101,8 @@ function updateSize () {
   document.getElementById('fileCount').innerHTML = String(count)
   document.getElementById('fileSize').innerHTML = size
   document.getElementById('fileList').innerHTML = list.join('')
+
+  window.setTimeout(function () {
+    window.alert('Process bin files!!')
+  }, 1000)
 }
