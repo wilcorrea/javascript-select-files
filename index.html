@@ -1,0 +1,25 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Upload</title>
+  <script src="script.js" type="text/javascript"></script>
+</head>
+<body>
+<form name="uploadForm">
+  <p>
+    <input id="uploadInput" type="file" name="myFiles" onchange="updateSize();" multiple>
+  </p>
+  <hr>
+  <p>
+    selected files: <span id="fileCount">0</span>
+  </p>
+  <p>
+    total size: <span id="fileSize">0</span>
+  </p>
+  <div id="fileList"></div>
+</form>
+</body>
+</html>
