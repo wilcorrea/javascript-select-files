@@ -35,7 +35,7 @@ function dropHandler ($event) {
  * @param $event
  */
 function removeDragData ($event) {
-  console.log('Removing drag data')
+  // console.log('Removing drag data')
 
   if ($event.dataTransfer.items) {
     // Use DataTransferItemList interface to remove the drag data
@@ -50,7 +50,7 @@ function removeDragData ($event) {
  * @param $event
  */
 function dragOverHandler ($event) {
-  console.log('File(s) in drop zone')
+  // console.log('File(s) in drop zone')
 
   // Prevent default behavior (Prevent file from being opened)
   $event.preventDefault()
@@ -69,7 +69,6 @@ function updateSize (files) {
     list = [],
     data = []
   for (let index = 0; index < count; index++) {
-    // console.log('~> index: ', files[index])
     /*
     lastModified:1529182639895
     lastModifiedDate:Sat Jun 16 2018 17:57:19 GMT-0300 (-03) {}
@@ -140,4 +139,5 @@ function parseBase64 (file, callback) {
  */
 function process (data) {
   console.log('~> data ' , data)
+  window.alert('Process ' + data.length + ' files!')
 }
