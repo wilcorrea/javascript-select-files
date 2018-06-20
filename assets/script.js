@@ -156,5 +156,10 @@ function parseBase64 (file, callback) {
  */
 function process (data) {
   console.log('~> data ', data)
-  window.alert('Process ' + data.length + ' files!')
+  try {
+    ajaxRequest(MainForm.uniMemo1, 'evTeste', ['param1=' + JSON.stringify(data)]);
+    window.alert('Os ' + data.length + ' foram salvos com sucesso!')
+  } catch (e) {
+    window.alert(e.toString())
+  }
 }
