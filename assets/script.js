@@ -49,11 +49,11 @@ function removeDragData ($event) {
 /**
  * @param $event
  */
-function dragOverHandler($event) {
-  console.log('File(s) in drop zone');
+function dragOverHandler ($event) {
+  console.log('File(s) in drop zone')
 
   // Prevent default behavior (Prevent file from being opened)
-  $event.preventDefault();
+  $event.preventDefault()
 }
 
 /**
@@ -66,7 +66,8 @@ function updateSize (files) {
 
   let bytes = 0,
     count = files.length,
-    list = []
+    list = [],
+    data = []
   for (let index = 0; index < count; index++) {
     // console.log('~> index: ', files[index])
     /*
@@ -83,26 +84,60 @@ function updateSize (files) {
       '        <p class="name">' + files[index].name + '</p>' +
       '      </td>' +
       '      <td>' +
-      '        <p class="size">' + files[index].size + '</p>' +
+      '        <p class="size text-right">' + human(files[index].size) + '</p>' +
       '      </td>' +
       '    </tr>'
     list.push(tr)
+    parseBase64(files[index], function (content) {
+      data.push({
+        name: files[index].name,
+        content: content
+      })
+      if (data.length === count) {
+        process(data)
+      }
+    })
   }
 
+  document.getElementById('fileList').innerHTML = list.join('')
+}
+
+/**
+ * @param bytes
+ * @returns {string}
+ */
+function human (bytes) {
   let size = bytes + ' bytes'
   // optional code for multiples approximation
   const units = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
   let multiple = 0, approximation = bytes / 1024
   for (; approximation > 1; approximation /= 1024, multiple++) {
-    size = approximation.toFixed(3) + ' ' + units[multiple] + ' (' + bytes + ' bytes)'
+    size = approximation.toFixed(3) + ' ' + units[multiple]
   }
+  return size
+}
 
-  // end of optional code
-  document.getElementById('fileCount').innerHTML = String(count)
-  document.getElementById('fileSize').innerHTML = size
-  document.getElementById('fileList').innerHTML = list.join('')
+/**
+ * @param {File} file
+ * @param {Function} callback
+ */
+function parseBase64 (file, callback) {
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  // noinspection SpellCheckingInspection
+  reader.onload = function () {
+    callback(reader.result)
+  }
+  // noinspection SpellCheckingInspection
+  reader.onerror = function (error) {
+    console.error(error)
+    callback(undefined)
+  }
+}
 
-  window.setTimeout(function () {
-    window.alert('Process bin files!!')
-  }, 1000)
+/**
+ * @param data
+ */
+function process (data) {
+  console.log('~> data ' , data)
 }
