@@ -6,7 +6,7 @@ function dropHandler ($event) {
   let i
 
   // evita o comportamento padrão
-  prevent($event)
+  preventDefault($event)
 
   const files = []
   // analisa os items do drop
@@ -53,7 +53,7 @@ function removeDragData ($event) {
  * Evita o comportamento padrão do navegador
  * @param {Event} $event
  */
-function prevent ($event) {
+function preventDefault ($event) {
   // evita o comportamento padrão
   $event.preventDefault()
 }
@@ -62,7 +62,7 @@ function prevent ($event) {
  * Processa os arquivos que estão sendo manipulados
  * @param {Array} [files]
  */
-function parseFiles (files = []) {
+function parseFiles (files) {
   // se não tiver sido enviado por parâmetros o files é pego do input
   if (!files) {
     files = document.getElementById('fileInput').files
@@ -111,19 +111,24 @@ function parseFiles (files = []) {
 
 /**
  * Converte bytes em uma unidade mais amigável
- * @param {int} bytes
+ * @param {Number} bytes
  * @returns {string}
  */
 function human (bytes) {
-  let size = bytes + ' bytes'
-  // notações comuns
-  const units = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
-  let multiple = 0, approximation = bytes / 1024
-  // vai calculando os múltiplos até chegar na unidade mais adequada
-  for (; approximation > 1; approximation /= 1024, multiple++) {
-    size = approximation.toFixed(3) + ' ' + units[multiple]
+  const si = true
+  const thresh = si ? 1000 : 1024
+  if (Math.abs(bytes) < thresh) {
+    return bytes + ' B'
   }
-  return size
+  const units = si
+    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+  let u = -1
+  do {
+    bytes /= thresh
+    ++u
+  } while (Math.abs(bytes) >= thresh && u < units.length - 1)
+  return bytes.toFixed(1) + ' ' + units[u]
 }
 
 /**
@@ -150,6 +155,6 @@ function parseBase64 (file, callback) {
  * @param {Array} data
  */
 function process (data) {
-  console.log('~> data ' , data)
+  console.log('~> data ', data)
   window.alert('Process ' + data.length + ' files!')
 }
