@@ -15,6 +15,12 @@ const APP_UNIT_SI = true
 let $LOADER = null
 
 /**
+ * @type {HTMLElement}
+ * noinspection JSValidateTypes
+ */
+let $PROGRESS = null
+
+/**
  * Lida com o drop dos arquivos
  * @param {DragEvent} $event
  */
@@ -77,7 +83,7 @@ function preventDefault ($event) {
 /**
  * @param {boolean} visible
  */
-function loading (visible) {
+function loader (visible) {
   if (!$LOADER) {
     $LOADER = document.getElementById('fileLoader')
   }
@@ -85,11 +91,21 @@ function loading (visible) {
 }
 
 /**
+ * @param {Number} width
+ */
+function progress (width) {
+  if (!$PROGRESS) {
+    $PROGRESS = document.getElementById('fileProgress')
+  }
+  $PROGRESS.style.width = width + '%'
+}
+
+/**
  * Processa os arquivos que estão sendo manipulados
  * @param {Array} [files]
  */
 function parseFiles (files) {
-  loading(true)
+  loader(true)
   const parse = () => {
     // se não tiver sido enviado por parâmetros o files é pego do input
     if (!files) {
@@ -126,6 +142,10 @@ function parseFiles (files) {
           name: files[index].name,
           content: content
         })
+
+        // atualiza a barra de progresso
+        progress((data.length / count) * 100)
+
         // se este for o último processado finaliza o processo
         if (data.length === count) {
           process(data, bytes)
@@ -203,7 +223,7 @@ function process (data, bytes) {
 
   if (bytes > APP_MAX_INPUT_FILE) {
     updateFileList([])
-    loading(false)
+    loader(false)
 
     return window.alert('Você informou ' +
       '`' + human(bytes) + '` e o máximo de dados permitido é ' +
@@ -217,6 +237,6 @@ function process (data, bytes) {
   } catch (e) {
     window.alert(e.toString())
   } finally {
-    loading(false)
+    loader(false)
   }
 }
