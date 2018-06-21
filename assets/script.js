@@ -9,6 +9,12 @@ const APP_MAX_INPUT_FILE = 10 * 1024 * 1024
 const APP_UNIT_SI = true
 
 /**
+ * @type {HTMLElement}
+ * noinspection JSValidateTypes
+ */
+let $LOADER = null
+
+/**
  * Lida com o drop dos arquivos
  * @param {DragEvent} $event
  */
@@ -69,54 +75,68 @@ function preventDefault ($event) {
 }
 
 /**
+ * @param {boolean} visible
+ */
+function loading (visible) {
+  if (!$LOADER) {
+    $LOADER = document.getElementById('fileLoader')
+  }
+  $LOADER.style.display = visible ? 'block' : 'none'
+}
+
+/**
  * Processa os arquivos que estão sendo manipulados
  * @param {Array} [files]
  */
 function parseFiles (files) {
-  // se não tiver sido enviado por parâmetros o files é pego do input
-  if (!files) {
-    files = document.getElementById('fileInput').files
-  }
+  loading(true)
+  const parse = () => {
+    // se não tiver sido enviado por parâmetros o files é pego do input
+    if (!files) {
+      files = document.getElementById('fileInput').files
+    }
 
-  let count = files.length,
-    list = [],
-    data = [],
-    bytes = 0
-  // percorre o array de arquivos
-  for (let index = 0; index < count; index++) {
-    /*
-    lastModified:1529182639895
-    lastModifiedDate:Sat Jun 16 2018 17:57:19 GMT-0300 (-03) {}
-    name:"file.png"
-    size:44387
-    type:"image/png"
-    webkitRelativePath: ""
-     */
-    // concatena a tr para exibir na table
-    let name = files[index].name
-    let size = files[index].size
-    list.push({
-      name, size
-    })
-
-    // soma o total de bytes
-    bytes = bytes + size
-
-    // converte o arquivo para base64
-    parseBase64(files[index], function (content) {
-      data.push({
-        name: files[index].name,
-        content: content
+    let count = files.length,
+      list = [],
+      data = [],
+      bytes = 0
+    // percorre o array de arquivos
+    for (let index = 0; index < count; index++) {
+      /*
+      lastModified:1529182639895
+      lastModifiedDate:Sat Jun 16 2018 17:57:19 GMT-0300 (-03) {}
+      name:"file.png"
+      size:44387
+      type:"image/png"
+      webkitRelativePath: ""
+       */
+      // concatena a tr para exibir na table
+      let name = files[index].name
+      let size = files[index].size
+      list.push({
+        name, size
       })
-      // se este for o último processado finaliza o processo
-      if (data.length === count) {
-        process(data, bytes)
-      }
-    })
-  }
 
-  // exibe as tr na table
-  updateFileList(list)
+      // soma o total de bytes
+      bytes = bytes + size
+
+      // converte o arquivo para base64
+      parseBase64(files[index], function (content) {
+        data.push({
+          name: files[index].name,
+          content: content
+        })
+        // se este for o último processado finaliza o processo
+        if (data.length === count) {
+          process(data, bytes)
+        }
+      })
+    }
+
+    // exibe as tr na table
+    updateFileList(list)
+  }
+  window.setTimeout(parse, 1)
 }
 
 /**
@@ -180,17 +200,23 @@ function parseBase64 (file, callback) {
  */
 function process (data, bytes) {
   console.log('~> data ', data)
+
   if (bytes > APP_MAX_INPUT_FILE) {
     updateFileList([])
+    loading(false)
+
     return window.alert('Você informou ' +
       '`' + human(bytes) + '` e o máximo de dados permitido é ' +
       '`' + human(APP_MAX_INPUT_FILE) + '`'
     )
   }
+
   try {
     ajaxRequest(MainForm.uniMemo1, 'evTeste', ['param1=' + JSON.stringify(data)])
     window.alert('Os ' + data.length + ' foram salvos com sucesso!')
   } catch (e) {
     window.alert(e.toString())
+  } finally {
+    loading(false)
   }
 }
