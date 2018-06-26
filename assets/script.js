@@ -129,28 +129,22 @@ function parseFiles (files) {
       type:"image/png"
       webkitRelativePath: ""
        */
-      let type = files[index].type
-      if (!accept.includes(type)) {
+      if (!accept.includes(files[index].type)) {
         continue
       }
 
-      // adiciona um item na lista
-      let name = files[index].name
-      let size = files[index].size
-      list.push({
-        name: name,
-        size: size,
-        raw: files[index]
-      })
-
       // soma o total de bytes
-      bytes = bytes + size
+      bytes = bytes + files[index].size
+
+      // add o arquivo na lista de válidos
+      list.push(files[index])
     }
 
     const total = list.length
-    list.forEach(function (file) {
+    for (let index = 0; index < total; index++) {
+      let file = list[index]
       // converte o arquivo para base64
-      parseBase64(file.raw, function (content) {
+      parseBase64(file, function (content) {
         data.push({
           name: file.name,
           content: content
@@ -164,7 +158,11 @@ function parseFiles (files) {
           process(data, bytes)
         }
       })
-    })
+    }
+
+    if (!total) {
+      loader(false)
+    }
 
     // exibe as tr na table
     updateFileList(list)
