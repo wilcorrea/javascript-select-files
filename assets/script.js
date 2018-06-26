@@ -107,9 +107,12 @@ function progress (width) {
 function parseFiles (files) {
   loader(true)
   const parse = () => {
+    const $fileInput = document.getElementById('fileInput')
+    const accept = String($fileInput.accept).split(',')
+
     // se não tiver sido enviado por parâmetros o files é pego do input
     if (!files) {
-      files = document.getElementById('fileInput').files
+      files = $fileInput.files
     }
 
     let count = files.length,
@@ -126,32 +129,42 @@ function parseFiles (files) {
       type:"image/png"
       webkitRelativePath: ""
        */
-      // concatena a tr para exibir na table
+      let type = files[index].type
+      if (!accept.includes(type)) {
+        continue
+      }
+
+      // adiciona um item na lista
       let name = files[index].name
       let size = files[index].size
       list.push({
-        name, size
+        name: name,
+        size: size,
+        raw: files[index]
       })
 
       // soma o total de bytes
       bytes = bytes + size
+    }
 
+    const total = list.length
+    list.forEach(function (file) {
       // converte o arquivo para base64
-      parseBase64(files[index], function (content) {
+      parseBase64(file.raw, function (content) {
         data.push({
-          name: files[index].name,
+          name: file.name,
           content: content
         })
 
         // atualiza a barra de progresso
-        progress((data.length / count) * 100)
+        progress((data.length / total) * 100)
 
         // se este for o último processado finaliza o processo
-        if (data.length === count) {
+        if (data.length === total) {
           process(data, bytes)
         }
       })
-    }
+    })
 
     // exibe as tr na table
     updateFileList(list)

@@ -39,12 +39,13 @@
     <span class="btn btn-success fileinput-button">
         <span>Selecionar Arquivos</span>
       <!-- input do tipo file meio que escondido atrás do botão -->
+      <!-- http://www.iana.org/assignments/media-types/media-types.xhtml -->
         <input
                 id="fileInput"
                 type="file"
                 onchange="parseFiles();"
                 multiple
-                accept="image/jpeg,image/gif,image/png,application/pdf,image/x-eps"
+                accept="image/jpeg,image/gif,image/png,application/pdf,text/plain,image/x-eps"
         >
     </span>
   </p>
